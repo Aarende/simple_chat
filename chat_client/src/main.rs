@@ -1,3 +1,4 @@
+use rustls::crypto::ring;
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use futures_util::{SinkExt, StreamExt};
 use tokio::io::{self, AsyncBufReadExt, BufReader};
@@ -9,6 +10,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Подгружаем переменные окружения из .env файла
     dotenv().ok();
+
+    // Устанавливаем ring в каестве криптопровайдера по умолчанию
+    ring::default_provider()
+        .install_default()
+        .expect("Ошибка установки провайдера ring");
 
     let server_url = env::var("CHAT_SERVER_URL")?;
     
@@ -126,5 +132,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     println!("\n👋 Чат завершён");
     Ok(())
-    
+
 }
